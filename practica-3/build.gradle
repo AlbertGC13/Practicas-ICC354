@@ -38,5 +38,5 @@ tasks.named('test') {
 }
 
 application {
-    mainClassName = 'org.example.practica01.Practica01Application'
+    mainClassName = 'org.example.practica03.Practica01Application'
 }

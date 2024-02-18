@@ -35,3 +35,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+application {
+    mainClassName = 'org.example.practica01.Practica01Application'
+}
