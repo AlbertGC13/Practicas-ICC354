@@ -1,117 +1,97 @@
-version: '3.8'
-
+#indica la version de Docker Compose utilizada
+version: '3.9'
+#Bloque de servicios, indica los contenedores a utilizar.
 services:
-  app1:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: app1
+  app1:       #nombre del servicio
+    #    build: ./practica-4
+    image: albertgc/practica04:latest
+    env_file: #Indica el parametro para
+      - .env
+    environment:    #variable de ambiente
+      - NOMBRE_APP=$AMBIENTE
+      - server.port=8080
     expose:
       - 8080
-    environment:
-      DB_HOST: h2db
-      DB_PORT: 9092
-      DB_NAME: test
-      DB_USERNAME: sa
-      DB_PASSWORD:
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      server.port: 8080
-
-    networks:
+    restart: always
+    networks:    #red para conectar los equipos.
       - red-app
-    depends_on:
-      - h2db
-      - redis
+    depends_on:   #indica que primero debe subir los servicios indicados.
+      base-datos-app-web:
+        condition: service_healthy
 
-  app2:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: app2
+  app2: #nombre del servicio
+    #    build: ./practica-4
+    image: albertgc/practica04:latest
+    env_file: #Indica el parametro para
+      - .env
+    environment: #variable de ambiente
+      - NOMBRE_APP=$AMBIENTE
+      - server.port=8081
     expose:
       - 8081
-    environment:
-      DB_HOST: h2db
-      DB_PORT: 9092
-      DB_NAME: test
-      DB_USERNAME: sa
-      DB_PASSWORD:
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      server.port: 8081
-
-    networks:
+    restart: always
+    networks: #red para conectar los equipos.
       - red-app
-    depends_on:
-      - h2db
-      - redis
+    depends_on: #indica que primero debe subir los servicios indicados.
+      base-datos-app-web:
+        condition: service_healthy
 
-  app3:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: app3
+  app3: #nombre del servicio
+    #    build: ./practica-4
+    image: albertgc/practica04:latest
+    env_file: #Indica el parametro para
+      - .env
+    environment: #variable de ambiente
+      - NOMBRE_APP=$AMBIENTE
+      - server.port=8082
     expose:
       - 8082
-    environment:
-      DB_HOST: h2db
-      DB_PORT: 9092
-      DB_NAME: test
-      DB_USERNAME: sa
-      DB_PASSWORD:
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      server.port: 8082
-
-    networks:
+    restart: always
+    networks: #red para conectar los equipos.
       - red-app
-    depends_on:
-      - h2db
-      - redis
+    depends_on: #indica que primero debe subir los servicios indicados.
+      base-datos-app-web:
+        condition: service_healthy
 
-  h2db:
-    image: oscarfonts/h2
-    container_name: h2db
+  base-datos-app-web:
+    image: mysql:5.7.26
     ports:
-      - "9092:9092"
-    volumes:
-      - h2-data:/h2-data
+      - ${PUERTO_DB}:${DB_PORT}
+    env_file:
+      - .env
     environment:
-      H2_OPTIONS: "-tcp -tcpAllowOthers -tcpPort 9092 -ifNotExists"
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_USER=$DB_USER
+      - MYSQL_DATABASE=$DB_NAME
+    volumes:   #volumen de datos utilizado.
+      - mi-volumen-bd:${DB_UBI}
     networks:
       - red-app
+    healthcheck:
+      test: [ "CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'db', '-p$$MYSQL_ROOT_PASSWORD' ]
+      timeout: 5s
+      retries: 5
 
   haproxy:
     environment:
       - CERT1=lb.playdomtv.me
       - EMAIL=agcmaster18@gmail.com
       - STAGING=false
-
-    container_name: haproxy
-    image: 'ghcr.io/tomdess/docker-haproxy-certbot:master'
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
       - ./haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
-    networks:
-      - red-app
-    depends_on:
+    links:
       - app1
       - app2
       - app3
-
-  redis:
-    image: redis
-    container_name: redis
-    ports:
-      - "6379:6379"
     networks:
       - red-app
+    ports:
+      - '80:80'
+      - '443:443'
+    image: 'ghcr.io/tomdess/docker-haproxy-certbot:master'
 
-networks:
-  red-app:
+networks:  #bloque para las redes
+  red-app:   #indicando la red definida
 
-volumes:
-  h2-data:
+volumes: #Bloque para definir los volumenes
+  mi-volumen-bd:
