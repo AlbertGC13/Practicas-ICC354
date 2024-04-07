@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app1
+    expose:
+      - 8080
+    environment:
+      DB_HOST: h2db
+      DB_PORT: 9092
+      DB_NAME: test
+      DB_USERNAME: sa
+      DB_PASSWORD:
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      server.port: 8080
+
+    networks:
+      - red-app
+    depends_on:
+      - h2db
+      - redis
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app2
+    expose:
+      - 8081
+    environment:
+      DB_HOST: h2db
+      DB_PORT: 9092
+      DB_NAME: test
+      DB_USERNAME: sa
+      DB_PASSWORD:
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      server.port: 8081
+
+    networks:
+      - red-app
+    depends_on:
+      - h2db
+      - redis
+
+  app3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app3
+    expose:
+      - 8082
+    environment:
+      DB_HOST: h2db
+      DB_PORT: 9092
+      DB_NAME: test
+      DB_USERNAME: sa
+      DB_PASSWORD:
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      server.port: 8082
+
+    networks:
+      - red-app
+    depends_on:
+      - h2db
+      - redis
+
+  h2db:
+    image: oscarfonts/h2
+    container_name: h2db
+    ports:
+      - "9092:9092"
+    volumes:
+      - h2-data:/h2-data
+    environment:
+      H2_OPTIONS: "-tcp -tcpAllowOthers -tcpPort 9092 -ifNotExists"
+    networks:
+      - red-app
+
+  haproxy:
+    environment:
+      - CERT1=lb.playdomtv.me
+      - EMAIL=agcmaster18@gmail.com
+      - STAGING=false
+
+    container_name: haproxy
+    image: 'ghcr.io/tomdess/docker-haproxy-certbot:master'
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
+    networks:
+      - red-app
+    depends_on:
+      - app1
+      - app2
+      - app3
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - red-app
+
+networks:
+  red-app:
+
+volumes:
+  h2-data:
