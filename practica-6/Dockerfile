@@ -10,14 +10,6 @@ RUN gradle bootjar --no-daemon
 
 FROM eclipse-temurin:17.0.8.1_1-jre-alpine
 
-ENV NOMBRE_APP = 'practica-mock'
-
-ENV DB_NAME=practica_mock
-
-ENV spring.datasource.username='root'
-
-ENV spring.datasource.password='admin'
-
 VOLUME /tmp
 
 EXPOSE 8080

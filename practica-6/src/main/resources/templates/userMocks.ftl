@@ -92,9 +92,9 @@ font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
         </div>
         <div x-show="mobileMenuOpen" class="sm:hidden" id="mobile-menu">
           <div class="pt-2 pb-3 space-y-1">
-            <a href="/admin/"
+            <a href="/user/"
               class="block px-3 py-2 text-base font-medium text-white rounded-md bg-sky-700">Usuarios</a>
-            <a href="/admin/mocks"
+            <a href="/user/mocks"
               class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-sky-500 hover:bg-opacity-75">Mocks</a>
           </div>
           <div class="pt-4 pb-3 border-t border-sky-700">

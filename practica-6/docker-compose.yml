@@ -16,8 +16,7 @@ services:
     networks:    #red para conectar los equipos.
       - red-app
     depends_on:   #indica que primero debe subir los servicios indicados.
-      base-datos-app-web:
-        condition: service_healthy
+      - base-datos-app-web
 
   app2: #nombre del servicio
     #    build: ./practica-4
@@ -33,8 +32,7 @@ services:
     networks: #red para conectar los equipos.
       - red-app
     depends_on: #indica que primero debe subir los servicios indicados.
-      base-datos-app-web:
-        condition: service_healthy
+      - base-datos-app-web
 
   app3: #nombre del servicio
     #    build: ./practica-4
@@ -50,27 +48,26 @@ services:
     networks: #red para conectar los equipos.
       - red-app
     depends_on: #indica que primero debe subir los servicios indicados.
-      base-datos-app-web:
-        condition: service_healthy
+      - base-datos-app-web
 
   base-datos-app-web:
-    image: mysql:5.7.26
-    ports:
-      - ${PUERTO_DB}:${DB_PORT}
-    env_file:
+    image: oscarfonts/h2:alpine
+    env_file: #Indica el parametro para
       - .env
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - h2-data:/h2-data
     environment:
-      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
-      - MYSQL_USER=$DB_USER
-      - MYSQL_DATABASE=$DB_NAME
-    volumes:   #volumen de datos utilizado.
-      - mi-volumen-bd:${DB_UBI}
+      H2_OPTIONS: "-tcp -tcpAllowOthers -tcpPort 9092 -ifNotExists"
     networks:
       - red-app
     healthcheck:
-      test: [ "CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'db', '-p$$MYSQL_ROOT_PASSWORD' ]
-      timeout: 5s
+      test: [ "CMD", "nc", "-z", "localhost", "9092" ]
+      interval: 10s
+      timeout: 10s
       retries: 5
+      start_period: 10s
 
   haproxy:
     environment:
@@ -94,4 +91,4 @@ networks:  #bloque para las redes
   red-app:   #indicando la red definida
 
 volumes: #Bloque para definir los volumenes
-  mi-volumen-bd:
+  h2-data:

@@ -39,9 +39,7 @@ font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
             <div class="flex items-center px-2 lg:px-0">
               <div class="hidden sm:block">
                 <div class="flex space-x-4">
-
-                  <a href="/admin/" class="px-3 py-2 text-sm font-medium text-white rounded-md bg-black">Clientes</a>
-                  <a href="/admin/mocks"
+                  <a href="/user/"
                     class="px-3 py-2 border border-white text-sm font-medium text-black rounded-md">Mocks</a>
                 </div>
               </div>
@@ -94,9 +92,9 @@ font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
         </div>
         <div x-show="mobileMenuOpen" class="sm:hidden" id="mobile-menu">
           <div class="pt-2 pb-3 space-y-1">
-            <a href="/admin/"
+            <a href="/user/"
               class="block px-3 py-2 text-base font-medium text-white rounded-md bg-sky-700">Usuarios</a>
-            <a href="/admin/mocks"
+            <a href="/user/mocks"
               class="block px-3 py-2 text-base font-medium text-white rounded-md hover:bg-sky-500 hover:bg-opacity-75">Mocks</a>
           </div>
           <div class="pt-4 pb-3 border-t border-sky-700">
@@ -192,7 +190,7 @@ font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
                   </div>
                 </#if>
                 <#if datos??>
-                  <form name="myForm" role="form" action="/admin/mock?id=${datos.getId()}" method="POST"
+                  <form name="myForm" role="form" action="/user/mock?id=${datos.getId()}" method="POST"
                     onsubmit="return validateForm()">
                     <#if _csrf??> <#--validando que no sea nula, si lo es, está deshabilitado el csrf -->
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -387,7 +385,7 @@ font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 
                     <div class="mt-5">
                       <#if userMock??>
-                        <a href="/admin/mocks?id=${userMock.getId()}" type="button"
+                        <a href="/user/mocks?id=${userMock.getId()}" type="button"
                           class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
                           <@spring.message "button_cancel" />
                         </a>
@@ -400,7 +398,7 @@ font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
                 </#if>
                 </form>
                 <#else>
-                  <form name="myForm" role="form" action="/admin/mock" method="POST" onsubmit="return validateForm()">
+                  <form name="myForm" role="form" action="/user/mock" method="POST" onsubmit="return validateForm()">
                     <#if _csrf??> <#--validando que no sea nula, si lo es, está deshabilitado el csrf -->
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     </#if>

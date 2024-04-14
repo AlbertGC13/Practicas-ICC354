@@ -22,10 +22,10 @@ public class Mock implements Serializable {
 
     private String contentType;
 
-    @Column(columnDefinition="LONGTEXT")
+    @Column(columnDefinition="LONGVARCHAR")
     private String headers;
 
-    @Column(columnDefinition="LONGTEXT")
+    @Column(columnDefinition="LONGVARCHAR")
     private String cuerpo;
 
     private int demora;
